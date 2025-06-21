@@ -7,6 +7,16 @@
    CSS VARIABLES & DESIGN TOKENS
    ========================================= */
 :root {
+
+    /* Add this missing gradient */
+  --veloxa-gradient-mesh: 
+    radial-gradient(at 40% 20%, var(--veloxa-primary-500) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, var(--veloxa-primary-400) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, var(--veloxa-primary-600) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, var(--veloxa-primary-300) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, var(--veloxa-primary-700) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, var(--veloxa-primary-500) 0px, transparent 50%);
+
   /* Nestlé Blue Color Palette */
   --veloxa-primary-50: #eff6ff;
   --veloxa-primary-100: #dbeafe;

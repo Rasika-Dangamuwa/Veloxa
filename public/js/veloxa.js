@@ -579,12 +579,12 @@ Veloxa.components.Loading = class {
 // =========================================
 Veloxa.initializeComponents = function() {
     // Initialize Modals
-    Veloxa.utils.$('[data-modal]').forEach(modal => {
+    Veloxa.utils.$$('[data-modal]').forEach(modal => {
         new Veloxa.components.Modal(modal);
     });
 
     // Initialize Dropdowns
-    Veloxa.utils.$('[data-dropdown]').forEach(dropdown => {
+    Veloxa.utils.$$('[data-dropdown]').forEach(dropdown => {
         new Veloxa.components.Dropdown(dropdown);
     });
 
@@ -592,7 +592,7 @@ Veloxa.initializeComponents = function() {
     Veloxa.animations.observeElements('.veloxa-animate-on-scroll');
 
     // Initialize parallax elements
-    if (Veloxa.utils.$('[data-parallax]').length > 0) {
+    if (Veloxa.utils.$$('[data-parallax]').length > 0) {
         Veloxa.animations.parallax('[data-parallax]');
     }
 };
@@ -609,7 +609,7 @@ Veloxa.setupGlobalEvents = function() {
     }
 
     // Modal triggers
-    Veloxa.utils.$('[data-modal-target]').forEach(trigger => {
+    Veloxa.utils.$$('[data-modal-target]').forEach(trigger => {
         Veloxa.utils.on(trigger, 'click', (e) => {
             e.preventDefault();
             const targetId = trigger.getAttribute('data-modal-target');
@@ -621,7 +621,7 @@ Veloxa.setupGlobalEvents = function() {
     });
 
     // Smooth scroll for anchor links
-    Veloxa.utils.$('a[href^="#"]').forEach(link => {
+    Veloxa.utils.$$('a[href^="#"]').forEach(link => {
         Veloxa.utils.on(link, 'click', (e) => {
             const href = link.getAttribute('href');
             if (href === '#') return;

@@ -15,7 +15,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Veloxa Core CSS -->
-    <link rel="stylesheet" href="{{ asset('css/veloxa.css') }}">
+    <link href="{{ asset('css/veloxa.css') }}" rel="stylesheet">
     
     <!-- Page specific styles -->
     <style>
