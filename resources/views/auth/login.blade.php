@@ -1,336 +1,326 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Veloxa - Login | Nestlé Lanka SPD</title>
+    <title>Veloxa - Login</title>
     
-    <!-- Preload critical fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
+    <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Veloxa Core CSS -->
+    <!-- Custom CSS -->
     <link href="{{ asset('css/veloxa.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/mobile.css') }}" rel="stylesheet">
     
-    <!-- Page specific styles -->
     <style>
-        .veloxa-login-container {
+        /* Login Specific Styles */
+        .login-container {
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-800) 100%);
             min-height: 100vh;
-            background: var(--veloxa-gradient-mesh);
             position: relative;
             overflow: hidden;
         }
 
-        .veloxa-login-bg-elements {
+        [data-theme="dark"] .login-container {
+            background: linear-gradient(135deg, var(--blue-900) 0%, #0f172a 100%);
+        }
+
+        .login-bg-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(255,255,255,0.1) 0%, transparent 50%);
+        }
+
+        .floating-shapes {
             position: absolute;
             inset: 0;
             pointer-events: none;
-            overflow: hidden;
         }
 
-        .veloxa-bg-circle {
+        .shape {
             position: absolute;
-            border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(40px);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
         }
 
-        .veloxa-bg-circle-1 {
-            width: 400px;
-            height: 400px;
-            top: -200px;
-            right: -200px;
-            animation: veloxa-float 6s ease-in-out infinite;
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
         }
 
-        .veloxa-bg-circle-2 {
-            width: 300px;
-            height: 300px;
-            bottom: -150px;
-            left: -150px;
-            animation: veloxa-float 8s ease-in-out infinite reverse;
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
         }
 
-        .veloxa-bg-circle-3 {
-            width: 200px;
-            height: 200px;
-            top: 50%;
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
             left: 20%;
-            animation: veloxa-pulse 4s ease-in-out infinite;
-            opacity: 0.6;
+            animation-delay: 4s;
         }
 
-        .veloxa-login-card {
-            backdrop-filter: blur(30px);
+        .login-card {
+            backdrop-filter: blur(20px);
             background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                0 0 0 1px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
 
-        .veloxa-logo-container {
-            background: linear-gradient(135deg, var(--veloxa-primary-500), var(--veloxa-primary-600));
-            box-shadow: var(--veloxa-shadow-lg);
+        [data-theme="dark"] .login-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .veloxa-input-floating {
+        .logo-container {
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-600));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-group {
             position: relative;
         }
 
-        .veloxa-input-floating input {
-            padding: 1rem 3rem 1rem 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid rgba(59, 130, 246, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .veloxa-input-floating input:focus {
-            background: white;
-            border-color: var(--veloxa-primary-500);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .veloxa-input-floating label {
+        .input-icon {
             position: absolute;
-            left: 1rem;
-            top: 1rem;
-            color: var(--veloxa-gray-500);
-            transition: all 0.3s ease;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
             pointer-events: none;
-            background: white;
-            padding: 0 0.5rem;
-            border-radius: 4px;
         }
 
-        .veloxa-input-floating input:focus + label,
-        .veloxa-input-floating input:not(:placeholder-shown) + label {
-            top: -0.5rem;
-            left: 0.75rem;
-            font-size: 0.75rem;
-            color: var(--veloxa-primary-600);
-            font-weight: 600;
+        .form-input.with-icon {
+            padding-left: 2.5rem;
         }
 
-        .veloxa-login-btn {
-            background: var(--veloxa-gradient-primary);
-            border: none;
-            box-shadow: 
-                var(--veloxa-shadow-lg),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .veloxa-login-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 20px 40px -12px rgba(37, 99, 235, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .veloxa-login-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .veloxa-login-btn::before {
-            content: '';
+        .password-toggle {
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .veloxa-login-btn:hover::before {
-            left: 100%;
-        }
-
-        .veloxa-role-badge {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--veloxa-primary-700);
-            border: 1px solid rgba(37, 99, 235, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .veloxa-password-toggle {
-            position: absolute;
-            right: 1rem;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: var(--veloxa-gray-400);
+            color: var(--text-tertiary);
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            transition: all 0.2s ease;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all var(--transition-fast);
         }
 
-        .veloxa-password-toggle:hover {
-            color: var(--veloxa-primary-600);
-            background: rgba(59, 130, 246, 0.1);
+        .password-toggle:hover {
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+        }
+
+        .remember-checkbox {
+            appearance: none;
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid var(--border-primary);
+            border-radius: 3px;
+            background: var(--bg-primary);
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition-fast);
+        }
+
+        .remember-checkbox:checked {
+            background: var(--blue-500);
+            border-color: var(--blue-500);
+        }
+
+        .remember-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: -2px;
+            left: 1px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle-login {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
         }
 
         @media (max-width: 640px) {
-            .veloxa-login-card {
+            .login-card {
                 margin: 1rem;
-                padding: 2rem;
+                padding: 1.5rem;
             }
             
-            .veloxa-bg-circle-1,
-            .veloxa-bg-circle-2 {
-                transform: scale(0.7);
+            .theme-toggle-login {
+                top: 0.5rem;
+                right: 0.5rem;
             }
-        }
-
-        /* Loading state */
-        .veloxa-btn-loading {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-
-        .veloxa-btn-loading .veloxa-btn-text {
-            opacity: 0;
-        }
-
-        .veloxa-btn-loading .veloxa-btn-spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Alert animations */
-        .veloxa-alert-enter {
-            animation: veloxa-slide-up 0.3s ease-out;
         }
     </style>
 </head>
-
-<body class="veloxa-login-container">
-    <!-- Background Elements -->
-    <div class="veloxa-login-bg-elements">
-        <div class="veloxa-bg-circle veloxa-bg-circle-1"></div>
-        <div class="veloxa-bg-circle veloxa-bg-circle-2"></div>
-        <div class="veloxa-bg-circle veloxa-bg-circle-3"></div>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle-login">
+        <button class="theme-toggle">
+            <div class="theme-toggle-slider">☀️</div>
+        </button>
     </div>
 
-    <!-- Main Login Container -->
-    <div class="min-h-screen flex items-center justify-center px-4 relative z-10">
-        <div class="w-full max-w-md">
-            
-            <!-- Logo & Brand Section -->
-            <div class="text-center mb-8 veloxa-animate-slide-up">
-                <div class="veloxa-logo-container inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 veloxa-animate-float">
-                    <i class="fas fa-cube text-3xl text-white"></i>
-                </div>
-                <h1 class="text-4xl font-bold text-white mb-2 tracking-tight">Veloxa</h1>
-                <p class="text-blue-100 font-medium">Nestlé Lanka SPD Management System</p>
-                <div class="mt-4 flex justify-center">
-                    <div class="veloxa-role-badge px-4 py-2 rounded-full text-sm font-medium">
-                        Sales Promotion Department
-                    </div>
-                </div>
-            </div>
+    <div class="login-container">
+        <!-- Background Pattern -->
+        <div class="login-bg-pattern"></div>
+        
+        <!-- Floating Shapes -->
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
 
-            <!-- Login Form Card -->
-            <div class="veloxa-login-card rounded-3xl p-8 veloxa-animate-scale-in" style="animation-delay: 0.2s;">
-                
-                <!-- Form Header -->
-                <div class="text-center mb-8">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
-                    <p class="text-gray-600">Please sign in to your account</p>
+        <!-- Login Content -->
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="w-full max-w-md">
+                <!-- Logo and Branding -->
+                <div class="text-center mb-8 animate-fade-in">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 animate-float">
+                        <i class="fas fa-cube text-2xl logo-container"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Veloxa</h1>
+                    <p class="text-blue-100">Nestlé Lanka Sales Promotion System</p>
                 </div>
 
-                <!-- Alert Messages -->
-                @if(session('success'))
-                    <div class="veloxa-alert veloxa-alert-success veloxa-alert-enter mb-6">
-                        <i class="fas fa-check-circle"></i>
-                        <span>{{ session('success') }}</span>
+                <!-- Login Card -->
+                <div class="login-card rounded-2xl p-8 animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-primary mb-2">Welcome Back</h2>
+                        <p class="text-secondary">Sign in to your account to continue</p>
                     </div>
-                @endif
 
-                @if(session('error'))
-                    <div class="veloxa-alert veloxa-alert-error veloxa-alert-enter mb-6">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span>{{ session('error') }}</span>
-                    </div>
-                @endif
+                    <!-- Success/Error Messages -->
+                    @if(session('success'))
+                        <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg animate-slide-in" data-auto-hide>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                <span>{{ session('success') }}</span>
+                                <button class="alert-close ml-auto">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
 
-                <!-- Login Form -->
-                <form method="POST" action="{{ route('login') }}" id="loginForm" data-loading>
-                    @csrf
-                    
-                    <div class="space-y-6">
+                    @if(session('error'))
+                        <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg animate-slide-in" data-auto-hide>
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                <span>{{ session('error') }}</span>
+                                <button class="alert-close ml-auto">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Login Form -->
+                    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                        @csrf
+                        
                         <!-- Email Field -->
-                        <div class="veloxa-input-floating">
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                value="{{ old('email') }}"
-                                placeholder=" "
-                                class="w-full rounded-xl @error('email') border-red-500 @enderror"
-                                required
-                                autocomplete="email"
-                            >
-                            <label for="email">
-                                <i class="fas fa-envelope mr-2"></i>Email Address
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                Email Address
                             </label>
+                            <div class="input-group">
+                                <i class="fas fa-envelope input-icon"></i>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    value="{{ old('email') }}"
+                                    class="form-input with-icon @error('email') border-red-500 @enderror"
+                                    placeholder="Enter your email address"
+                                    required
+                                    autocomplete="email"
+                                >
+                            </div>
                             @error('email')
-                                <div class="text-red-600 text-sm mt-2 flex items-center">
-                                    <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
-                                </div>
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                                </p>
                             @enderror
                         </div>
 
                         <!-- Password Field -->
-                        <div class="veloxa-input-floating">
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder=" "
-                                class="w-full rounded-xl pr-12 @error('password') border-red-500 @enderror"
-                                required
-                                autocomplete="current-password"
-                            >
-                            <label for="password">
-                                <i class="fas fa-lock mr-2"></i>Password
+                        <div class="form-group">
+                            <label for="password" class="form-label">
+                                Password
                             </label>
-                            <button type="button" class="veloxa-password-toggle" onclick="Veloxa.togglePassword('password')">
-                                <i class="fas fa-eye" id="passwordIcon"></i>
-                            </button>
+                            <div class="input-group">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    class="form-input with-icon @error('password') border-red-500 @enderror"
+                                    placeholder="Enter your password"
+                                    required
+                                    autocomplete="current-password"
+                                >
+                                <button type="button" class="password-toggle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                             @error('password')
-                                <div class="text-red-600 text-sm mt-2 flex items-center">
-                                    <i class="fas fa-exclamation-circle mr-2"></i>{{ $message }}
-                                </div>
+                                <p class="mt-1 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}
+                                </p>
                             @enderror
                         </div>
 
                         <!-- Remember Me & Forgot Password -->
                         <div class="flex items-center justify-between">
-                            <label class="flex items-center cursor-pointer group">
+                            <label class="flex items-center gap-2 cursor-pointer">
                                 <input 
                                     type="checkbox" 
                                     name="remember" 
-                                    class="w-4 h-4 rounded border-2 border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 transition-all"
+                                    class="remember-checkbox"
                                 >
-                                <span class="ml-3 text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                                    Remember me
-                                </span>
+                                <span class="text-sm text-secondary">Remember me</span>
                             </label>
-                            <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                            <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
                                 Forgot password?
                             </a>
                         </div>
@@ -338,102 +328,99 @@
                         <!-- Login Button -->
                         <button 
                             type="submit" 
-                            class="veloxa-login-btn w-full py-4 px-6 text-white font-semibold rounded-xl transition-all duration-300"
-                            id="loginButton"
+                            class="btn btn-primary w-full text-base py-3"
                         >
-                            <span class="veloxa-btn-text flex items-center justify-center">
-                                <i class="fas fa-sign-in-alt mr-2"></i>
-                                Sign In to Veloxa
-                            </span>
-                            <div class="veloxa-btn-spinner hidden">
-                                <i class="fas fa-spinner fa-spin"></i>
-                            </div>
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Sign In
                         </button>
-                    </div>
-                </form>
+                    </form>
 
-                <!-- Available Roles Information -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <p class="text-center text-xs text-gray-500 mb-4 font-medium">Available User Roles</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="flex items-center justify-center p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                            <div class="text-center">
-                                <i class="fas fa-crown text-blue-600 mb-1"></i>
-                                <p class="text-xs font-medium text-blue-800">HOD</p>
+                    <!-- Available Roles Info -->
+                    <div class="mt-8 pt-6 border-t border-primary">
+                        <p class="text-center text-xs text-tertiary mb-3">Available User Roles:</p>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <div class="role-badge">
+                                <i class="fas fa-crown text-blue-500"></i>
+                                <span>Admin</span>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-center p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
-                            <div class="text-center">
-                                <i class="fas fa-user-tie text-green-600 mb-1"></i>
-                                <p class="text-xs font-medium text-green-800">Manager</p>
+                            <div class="role-badge">
+                                <i class="fas fa-user-tie text-blue-500"></i>
+                                <span>HOD</span>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-center p-3 bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-100">
-                            <div class="text-center">
-                                <i class="fas fa-truck text-purple-600 mb-1"></i>
-                                <p class="text-xs font-medium text-purple-800">Propagandist</p>
+                            <div class="role-badge">
+                                <i class="fas fa-briefcase text-blue-500"></i>
+                                <span>Manager</span>
                             </div>
-                        </div>
-                        <div class="flex items-center justify-center p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-100">
-                            <div class="text-center">
-                                <i class="fas fa-warehouse text-orange-600 mb-1"></i>
-                                <p class="text-xs font-medium text-orange-800">Warehouse</p>
+                            <div class="role-badge">
+                                <i class="fas fa-warehouse text-blue-500"></i>
+                                <span>Warehouse</span>
+                            </div>
+                            <div class="role-badge">
+                                <i class="fas fa-truck text-blue-500"></i>
+                                <span>Propagandist</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Footer -->
-            <div class="text-center mt-8 veloxa-animate-slide-up" style="animation-delay: 0.4s;">
-                <p class="text-blue-100 text-sm font-medium">
-                    © 2025 Nestlé Lanka Limited. All rights reserved.
-                </p>
-                <p class="text-blue-200 text-xs mt-1">
-                    Powered by Veloxa v1.0
-                </p>
+                <!-- Footer -->
+                <div class="text-center mt-8 animate-fade-in" style="animation-delay: 0.4s;">
+                    <p class="text-blue-100 text-sm">
+                        © 2025 Nestlé Lanka Limited. All rights reserved.
+                    </p>
+                    <p class="text-blue-200 text-xs mt-1">
+                        Powered by Veloxa v1.0
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- JavaScript -->
     <script src="{{ asset('js/veloxa.js') }}"></script>
+    
     <script>
-        // Password toggle functionality
-        Veloxa.togglePassword = function(inputId) {
-            const passwordField = document.getElementById(inputId);
-            const passwordIcon = document.getElementById(inputId + 'Icon');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                passwordIcon.className = 'fas fa-eye-slash';
-            } else {
-                passwordField.type = 'password';
-                passwordIcon.className = 'fas fa-eye';
-            }
-        };
-
-        // Enhanced form submission with loading state
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const submitButton = document.getElementById('loginButton');
-            const buttonText = submitButton.querySelector('.veloxa-btn-text');
-            const buttonSpinner = submitButton.querySelector('.veloxa-btn-spinner');
-            
-            // Add loading state
-            submitButton.classList.add('veloxa-btn-loading');
-            buttonText.classList.add('hidden');
-            buttonSpinner.classList.remove('hidden');
-            
-            // Disable button
-            submitButton.disabled = true;
-        });
-
-        // Show success toast for demo
+        // Page-specific JavaScript
         document.addEventListener('DOMContentLoaded', function() {
-            // Add stagger animation to role cards
-            setTimeout(() => {
-                Veloxa.animations.staggerElements('.grid div', 100);
-            }, 600);
+            // Add staggered animation to role badges
+            const roleBadges = document.querySelectorAll('.role-badge');
+            roleBadges.forEach((badge, index) => {
+                badge.style.animationDelay = `${0.6 + (index * 0.1)}s`;
+                badge.classList.add('animate-fade-in');
+            });
+
+            // Focus management
+            const emailInput = document.getElementById('email');
+            if (emailInput && !emailInput.value) {
+                emailInput.focus();
+            }
+
+            // Enhanced form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                if (!email || !password) {
+                    e.preventDefault();
+                    window.VeloxaUI.showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing In...';
+                submitBtn.disabled = true;
+            });
+
+            // Demo credentials tooltip (remove in production)
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                const emailInput = document.getElementById('email');
+                emailInput.title = 'Demo: admin@spdhub.com';
+                
+                const passwordInput = document.getElementById('password');
+                passwordInput.title = 'Demo: password';
+            }
         });
     </script>
 </body>
